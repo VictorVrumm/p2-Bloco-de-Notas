@@ -1,0 +1,63 @@
+import 'package:equatable/equatable.dart';
+
+abstract class NoteEvent extends Equatable {
+  const NoteEvent();
+  @override
+  List<Object> get props => [];
+}
+
+class LoadNotes extends NoteEvent {}
+
+class AddNote extends NoteEvent {
+  final String title;
+  final String content;
+  final String categoryId;
+
+  const AddNote({
+    required this.title,
+    required this.content,
+    required this.categoryId
+  });
+
+  @override
+  List<Object> get props => [title, content, categoryId];
+}
+
+class UpdateNote extends NoteEvent {
+  final String noteId;
+  final String title;
+  final String content;
+  final String categoryId;
+
+  const UpdateNote({
+    required this.noteId,
+    required this.title,
+    required this.content,
+    required this.categoryId
+  });
+
+  @override
+  List<Object> get props => [noteId, title, content, categoryId];
+}
+
+class DeleteNote extends NoteEvent {
+  final String noteId;
+
+  const DeleteNote({required this.noteId});
+
+  @override
+  List<Object> get props => [noteId];
+}
+
+class ReorderNotes extends NoteEvent {
+  final int oldIndex;
+  final int newIndex;
+
+  const ReorderNotes({
+    required this.oldIndex,
+    required this.newIndex
+  });
+
+  @override
+  List<Object> get props => [oldIndex, newIndex];
+}
