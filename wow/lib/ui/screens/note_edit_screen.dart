@@ -4,6 +4,7 @@ import 'package:wow/bloc/note_bloc.dart';
 import 'package:wow/bloc/note_event.dart';
 import 'package:wow/data/models/note.dart';
 import 'package:wow/data/models/category.dart';
+import 'package:wow/data/models/note_status.dart';
 import 'package:wow/utils/app_constants.dart';
 
 class NoteEditScreen extends StatefulWidget {
@@ -19,6 +20,7 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
   late TextEditingController _titleController;
   late TextEditingController _contentController;
   late Category _selectedCategory;
+  late NoteStatus _selectedStatus;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -27,6 +29,7 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
     _titleController = TextEditingController(text: widget.note.title);
     _contentController = TextEditingController(text: widget.note.content);
     _selectedCategory = widget.note.category;
+    _selectedStatus = widget.note.status;
   }
 
   @override
@@ -44,6 +47,7 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
           title: _titleController.text.trim(),
           content: _contentController.text.trim(),
           categoryId: _selectedCategory.id,
+          status: _selectedStatus.name,
         ),
       );
 
@@ -139,6 +143,61 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
                           if (newValue != null) {
                             setState(() {
                               _selectedCategory = newValue;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Seletor de Status
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                border: Border.all(color: colorScheme.outline),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    _selectedStatus.icon,
+                    color: _selectedStatus.color,
+                  ),
+                  const SizedBox(width: 12),
+                  const Text('Status:', style: TextStyle(fontSize: 16)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<NoteStatus>(
+                        value: _selectedStatus,
+                        isExpanded: true,
+                        items: NoteStatus.values.map((NoteStatus status) {
+                          return DropdownMenuItem<NoteStatus>(
+                            value: status,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  status.icon,
+                                  color: status.color,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  status.displayName,
+                                  style: TextStyle(color: status.color),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (NoteStatus? newValue) {
+                          if (newValue != null) {
+                            setState(() {
+                              _selectedStatus = newValue;
                             });
                           }
                         },

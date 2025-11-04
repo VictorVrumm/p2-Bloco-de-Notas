@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'category.dart';
+import 'note_status.dart';
 
 class Note extends Equatable {
   final String id;
@@ -8,6 +9,7 @@ class Note extends Equatable {
   final Category category;
   final DateTime createdAt;
   final bool isSynced;
+  final NoteStatus status;
 
   const Note({
     required this.id,
@@ -16,6 +18,7 @@ class Note extends Equatable {
     required this.category,
     required this.createdAt,
     this.isSynced = false,
+    this.status = NoteStatus.pending,
   });
 
   Note copyWith({
@@ -25,6 +28,7 @@ class Note extends Equatable {
     Category? category,
     DateTime? createdAt,
     bool? isSynced,
+    NoteStatus? status,
   }) {
     return Note(
       id: id ?? this.id,
@@ -33,6 +37,7 @@ class Note extends Equatable {
       category: category ?? this.category,
       createdAt: createdAt ?? this.createdAt,
       isSynced: isSynced ?? this.isSynced,
+      status: status ?? this.status,
     );
   }
 
@@ -45,6 +50,7 @@ class Note extends Equatable {
       'category': category.toMap(),
       'createdAt': createdAt.millisecondsSinceEpoch,
       'isSynced': isSynced ? 1 : 0,
+      'status': status.toJson(),
     };
   }
 
@@ -56,9 +62,12 @@ class Note extends Equatable {
       category: Category.fromMap(map['category']),
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt']),
       isSynced: map['isSynced'] == 1,
+      status: map['status'] != null
+          ? NoteStatus.fromJson(map['status'])
+          : NoteStatus.pending,
     );
   }
 
   @override
-  List<Object?> get props => [id, title, content, category, createdAt, isSynced];
+  List<Object?> get props => [id, title, content, category, createdAt, isSynced, status];
 }

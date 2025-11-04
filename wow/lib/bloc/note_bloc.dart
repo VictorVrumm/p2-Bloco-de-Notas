@@ -1,9 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wow/data/models/note.dart';
+import 'package:wow/data/models/note_status.dart';
 import 'package:wow/utils/app_constants.dart';
-import 'package:wow/bloc/note_event.dart';
-import 'package:wow/bloc/note_state.dart';
+import 'note_event.dart';
+import 'note_state.dart';
 
 class NoteBloc extends Bloc<NoteEvent, NoteState> {
   NoteBloc() : super(NoteInitial()) {
@@ -67,6 +68,9 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
         category: AppConstants.categories.firstWhere((cat) => cat.id == event.categoryId),
         createdAt: DateTime.now(),
         isSynced: false,
+        status: event.status != null
+            ? NoteStatus.fromJson(event.status!)
+            : NoteStatus.pending,
       );
       currentNotes.insert(0, newNote);
       _notes = currentNotes;
@@ -79,16 +83,27 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       final currentNotes = List<Note>.from((state as NoteLoaded).notes);
       final noteIndex = currentNotes.indexWhere((note) => note.id == event.noteId);
 
+      print('🔍 Updating note - Status received: ${event.status}');
+
       if (noteIndex != -1) {
+        final newStatus = NoteStatus.fromJson(event.status);
+        print('🎯 Status parsed: ${newStatus.name} - ${newStatus.displayName}');
+
         final updatedNote = currentNotes[noteIndex].copyWith(
           title: event.title,
           content: event.content,
           category: AppConstants.categories.firstWhere((cat) => cat.id == event.categoryId),
+          status: newStatus,
           isSynced: false,
         );
+
+        print('✅ Note updated with status: ${updatedNote.status.displayName}');
+
         currentNotes[noteIndex] = updatedNote;
         _notes = currentNotes;
         emit(NoteLoaded(notes: List.from(_notes)));
+      } else {
+        print('❌ Note not found with id: ${event.noteId}');
       }
     }
   }

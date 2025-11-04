@@ -12,11 +12,13 @@ class AddNote extends NoteEvent {
   final String title;
   final String content;
   final String categoryId;
+  final String? status;
 
   const AddNote({
     required this.title,
     required this.content,
-    required this.categoryId
+    required this.categoryId,
+    this.status,
   });
 
   @override
@@ -28,16 +30,18 @@ class UpdateNote extends NoteEvent {
   final String title;
   final String content;
   final String categoryId;
+  final String status;
 
   const UpdateNote({
     required this.noteId,
     required this.title,
     required this.content,
-    required this.categoryId
+    required this.categoryId,
+    required this.status,
   });
 
   @override
-  List<Object> get props => [noteId, title, content, categoryId];
+  List<Object> get props => [noteId, title, content, categoryId, status];
 }
 
 class DeleteNote extends NoteEvent {
